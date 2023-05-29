@@ -19,7 +19,9 @@ CREATE TABLE questions (
 );
 
 COPY questions FROM '/Users/rachel/Desktop/HackReactor/SDC2/server/csv-files/questOutput.csv'
-  DELIMITER '~';
+  DELIMITER '~' QUOTE '"' csv;
+
+ALTER SEQUENCE questions_id_seq RESTART WITH 3518964;
 
 CREATE TABLE answers (
   id serial PRIMARY KEY,
@@ -30,14 +32,13 @@ CREATE TABLE answers (
   answerer_email VARCHAR(255),
   reported BOOLEAN,
   helpful INT,
-  CONSTRAINT fk_question
-    FOREIGN KEY (question_id)
-      REFERENCES questions(id)
-      ON DELETE SET NULL
+  FOREIGN KEY (question_id) REFERENCES questions(id)
 );
 
 COPY answers FROM '/Users/rachel/Desktop/HackReactor/SDC2/server/csv-files/answerOutput.csv'
-  DELIMITER '~';
+  DELIMITER '~' QUOTE '"' csv;
+
+  ALTER SEQUENCE answers_id_seq RESTART WITH 6879307;
 
 CREATE TABLE answerPhotos (
   id serial PRIMARY KEY,
@@ -47,4 +48,6 @@ CREATE TABLE answerPhotos (
 );
 
 COPY answerPhotos FROM '/Users/rachel/Desktop/HackReactor/SDC2/server/csv-files/answerPhotoOutput.csv'
-  DELIMITER '~';
+  DELIMITER '~' QUOTE '"' csv;
+
+  ALTER SEQUENCE answerphotos_id_seq RESTART WITH 2063760;

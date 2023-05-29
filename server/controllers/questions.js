@@ -1,4 +1,5 @@
 const pool = require('../db_Postgres');
+// HELPFUL: https://shusson.info/post/building-nested-json-objects-with-postgres
 
 exports.questions = {
   getAll: (req, res) => {
@@ -30,9 +31,29 @@ exports.questions = {
     // productId, body, name, email
   },
   markAsHelpful: (req, res) => {
-    console.log('PUT REQUEST FOR HELPFUL Qs ', req.body);
+    const questionId = Number(req.params.question_id);
+    pool.query(
+      `UPDATE questions
+      SET helpful = helpful + 1
+      WHERE id = $1`,
+      [questionId],
+    )
+      .then(() => {
+        res.sendStatus(201);
+      })
+      .catch((err) => res.status(500).send(err));
   },
   report: (req, res) => {
-    console.log('PUT REQUEST FOR REPORT Qs', req.body);
+    const questionId = Number(req.params.question_id);
+    pool.query(
+      `UPDATE questions
+      SET reported = true
+      WHERE id = $1`,
+      [questionId],
+    )
+      .then(() => {
+        res.sendStatus(201);
+      })
+      .catch((err) => res.status(500).send(err));
   },
 };
