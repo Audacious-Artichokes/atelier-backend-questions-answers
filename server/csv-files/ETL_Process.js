@@ -15,6 +15,9 @@ const questOutputStream = fs.createWriteStream('/Users/rachel/Desktop/HackReacto
 const answerOutputStream = fs.createWriteStream('/Users/rachel/Desktop/HackReactor/SDC2/server/csv-files/answerOutput.csv');
 const ansPhotoOutputStream = fs.createWriteStream('/Users/rachel/Desktop/HackReactor/SDC2/server/csv-files/answerPhotoOutput.csv');
 
+// const sampleInputStream = fs.createReadStream('/Users/rachel/Desktop/HackReactor/SDC2/server/csv-files/sample.csv');
+// const sampleOutputStream = fs.createWriteStream('/Users/rachel/Desktop/HackReactor/SDC2/server/csv-files/sampleOutput.csv');
+
 const csvParser = csv();
 
 // Transform data types for any given row received from read stream
@@ -46,7 +49,6 @@ function transformOne(chunk) {
       console.log('ERROR IN SETTING DATE FOR THIS CHUNK ', chunk);
     }
   }
-
   return chunk;
 }
 
@@ -71,23 +73,23 @@ const conformedData = new Transform({
 
 // Questions
 
-pipeline(questInputStream, csvParser, conformedData, questOutputStream, (err) => {
-  if (err) {
-    console.log('Error occurred in the pipeline for Questions ', err);
-  } else {
-    console.log('SUCCESS! Pipeline for Questions Completed.');
-  }
-});
+// pipeline(questInputStream, csvParser, conformedData, questOutputStream, (err) => {
+//   if (err) {
+//     console.log('Error occurred in the pipeline for Questions ', err);
+//   } else {
+//     console.log('SUCCESS! Pipeline for Questions Completed.');
+//   }
+// });
 
 // Answers
 
-pipeline(answerInputStream, csvParser, conformedData, answerOutputStream, (err) => {
-  if (err) {
-    console.log('Error occurred in pipeline for Answers , ', err);
-  } else {
-    console.log('SUCCESS! Pipeline for Answers Completed.');
-  }
-});
+// pipeline(answerInputStream, csvParser, conformedData, answerOutputStream, (err) => {
+//   if (err) {
+//     console.log('Error occurred in pipeline for Answers , ', err);
+//   } else {
+//     console.log('SUCCESS! Pipeline for Answers Completed.');
+//   }
+// });
 
 // Answer Photos
 
@@ -98,3 +100,13 @@ pipeline(answerPhotoInputStream, csvParser, conformedData, ansPhotoOutputStream,
     console.log('SUCCESS! Pipeline for Answer Photos Completed.');
   }
 });
+
+// TESTING ONLY
+
+// pipeline(sampleInputStream, csvParser, conformedData, sampleOutputStream, (err) => {
+//   if (err) {
+//     console.log('Error occurred in the pipeline for Sample Data ', err);
+//   } else {
+//     console.log('SUCCESS! Pipeline for Sample Data Completed.');
+//   }
+// });
