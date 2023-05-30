@@ -51,3 +51,36 @@ COPY answerPhotos FROM '/Users/rachel/Desktop/HackReactor/SDC2/server/csv-files/
   DELIMITER '~' QUOTE '"' csv;
 
   ALTER SEQUENCE answerphotos_id_seq RESTART WITH 2063760;
+
+-- SELECT array_to_json(array_agg(row_to_json(photos)))
+--   FROM (SELECT * FROM answerphotos WHERE answer_id = 34) photos;
+
+-- SELECT
+--   product_id,
+--   (SELECT row_to_json(results)
+--     FROM
+--       (SELECT
+--         id AS quesiton_id,
+--         body AS question_body,
+--         date_written AS question_date,
+--         asker_name AS asker_name,
+--         helpful AS question_helpfulness,
+--         reported AS reported
+--         FROM questions
+--       ) AS results
+--   )
+-- FROM questions
+-- WHERE product_id=34
+-- AND reported = false
+
+-- SELECT
+--   product_id,
+--   (SELECT json_agg(
+--     json_build_object(
+--       'testing', id,
+--       'numberTwo', body
+--     )
+--   )) AS results
+-- FROM questions
+-- WHERE product_id=40348
+-- GROUP BY product_id;
