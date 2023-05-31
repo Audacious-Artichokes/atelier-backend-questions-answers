@@ -26,7 +26,7 @@ exports.questions = {
                 'date', date_written,
                 'answerer_name', answerer_name,
                 'helpfulness', helpful,
-                'photos', (SELECT COALESCE(json_agg(url), '[]' ) FROM answerphotos WHERE answer_id = answers.id)
+                'photos', (SELECT COALESCE(json_agg(json_build_object('id', id, 'url', url)), '[]' ) FROM answerphotos WHERE answer_id = answers.id)
               )
             ), '{}') FROM answers WHERE question_id = questions.id)
           )
@@ -57,7 +57,7 @@ exports.questions = {
       [product, body, timestamp, name, email],
     )
       .then(() => res.sendStatus(201))
-      .catcgh((err) => res.status(500).send(err));
+      .catch((err) => res.status(500).send(err));
   },
   markAsHelpful: (req, res) => {
     const questionId = Number(req.params.question_id);
