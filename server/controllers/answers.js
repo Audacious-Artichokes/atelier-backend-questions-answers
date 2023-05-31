@@ -7,63 +7,88 @@ exports.answers = {
     const count = Number(req.query.count) || 5;
     const offset = (page - 1) * count;
 
-    const fullResult = {
-      question: questionId,
-      page,
-      count,
-      results: [],
-    };
-
     pool.query(
-      `SELECT *
+      `SELECT
+        question_id AS question,
+        (SELECT json_agg(
+          json_build_object(
+            'answer_id', id,
+            'body', body,
+            'date', date_written,
+            'answerer_name', answerer_name,
+            'helpfulness', helpful,
+            'photos', (SELECT COALESCE(json_agg(json_build_object('id', id, 'url', url)), '[]' ) FROM answerphotos WHERE answer_id = answers.id)
+          )
+        )) AS results
       FROM answers
       WHERE question_id = $1
       AND reported = false
-      ORDER BY question_id
-      LIMIT $2 OFFSET $3`,
+      GROUP BY question_id
+      LIMIT $2 OFFSET $3;`,
       [questionId, count, offset],
     )
       .then((results) => {
-        const promiseMap = results.rows.map((row) => (
-          new Promise((resolve, reject) => {
-            const rowObj = {
-              answer_id: row.id,
-              body: row.body,
-              date: row.date_written,
-              answerer_name: row.answerer_name,
-              answerer_email: row.answerer_email,
-              helpfulness: row.helpful,
-            };
-            pool.query(
-              `SELECT *
-              FROM answerPhotos
-              WHERE answer_id = $1`,
-              [row.id],
-            )
-              .then((answerPhotos) => {
-                const photos = answerPhotos.rows.map((photo) => (
-                  {
-                    id: photo.id,
-                    url: photo.url.slice(1, photo.url.length - 2),
-                  }
-                ));
-                rowObj.photos = photos;
-                resolve(rowObj);
-              })
-              .catch((err) => reject(err));
-          })
-        ));
-        return promiseMap;
+        res.status(200).send(results.rows);
       })
-      .then((promises) => {
-        const responseObj = Promise.all(promises);
-        return responseObj;
-      })
-      .then((ansAndPhotos) => {
-        fullResult.results = fullResult.results.concat(ansAndPhotos);
-        res.status(200).send(fullResult);
-      })
-      .catch((err) => res.status(500).send(`UNABLE TO QUERY: ${err}`));
+      .catch((err) => res.status(500).send(err));
+
+    // const fullResult = {
+    //   question: questionId,
+    //   page,
+    //   count,
+    //   results: [],
+    // };
+
+    // pool.query(
+    //   `SELECT *
+    //   FROM answers
+    //   WHERE question_id = $1
+    //   AND reported = false
+    //   ORDER BY question_id
+    //   LIMIT $2 OFFSET $3`,
+    //   [questionId, count, offset],
+    // )
+    //   .then((results) => {
+    //     const promiseMap = results.rows.map((row) => (
+    //       new Promise((resolve, reject) => {
+    //         const rowObj = {
+    //           answer_id: row.id,
+    //           body: row.body,
+    //           date: row.date_written,
+    //           answerer_name: row.answerer_name,
+    //           answerer_email: row.answerer_email,
+    //           helpfulness: row.helpful,
+    //         };
+    //         pool.query(
+    //           `SELECT *
+    //           FROM answerPhotos
+    //           WHERE answer_id = $1`,
+    //           [row.id],
+    //         )
+    //           .then((answerPhotos) => {
+    //             const photos = answerPhotos.rows.map((photo) => (
+    //               {
+    //                 id: photo.id,
+    //                 url: photo.url.slice(1, photo.url.length - 2),
+    //               }
+    //             ));
+    //             rowObj.photos = photos;
+    //             resolve(rowObj);
+    //           })
+    //           .catch((err) => reject(err));
+    //       })
+    //     ));
+    //     return promiseMap;
+    //   })
+    //   .then((promises) => {
+    //     const responseObj = Promise.all(promises);
+    //     return responseObj;
+    //   })
+    //   .then((ansAndPhotos) => {
+    //     fullResult.results = fullResult.results.concat(ansAndPhotos);
+    //     res.status(200).send(fullResult);
+    //   })
+    //   .catch((err) => res.status(500).send(`UNABLE TO QUERY: ${err}`));
   },
   addAnswer: (req, res) => {
     const questionId = req.params.question_id;
