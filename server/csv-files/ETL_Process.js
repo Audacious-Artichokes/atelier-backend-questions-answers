@@ -70,23 +70,23 @@ const conformedData = new Transform({
 
 // Questions
 
-pipeline(questInputStream, csvParser, conformedData, questOutputStream, (err) => {
-  if (err) {
-    console.log('Error occurred in the pipeline for Questions ', err);
-  } else {
-    console.log('SUCCESS! Pipeline for Questions Completed.');
-  }
-});
+// pipeline(questInputStream, csvParser, conformedData, questOutputStream, (err) => {
+//   if (err) {
+//     console.log('Error occurred in the pipeline for Questions ', err);
+//   } else {
+//     console.log('SUCCESS! Pipeline for Questions Completed.');
+//   }
+// });
 
 // Answers
 
-pipeline(answerInputStream, csvParser, conformedData, answerOutputStream, (err) => {
-  if (err) {
-    console.log('Error occurred in pipeline for Answers , ', err);
-  } else {
-    console.log('SUCCESS! Pipeline for Answers Completed.');
-  }
-});
+// pipeline(answerInputStream, csvParser, conformedData, answerOutputStream, (err) => {
+//   if (err) {
+//     console.log('Error occurred in pipeline for Answers , ', err);
+//   } else {
+//     console.log('SUCCESS! Pipeline for Answers Completed.');
+//   }
+// });
 
 // Answer Photos
 
